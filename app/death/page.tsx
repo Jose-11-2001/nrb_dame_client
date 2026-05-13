@@ -1,4 +1,4 @@
-
+// app/death-certificates/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -21,16 +21,20 @@ export default function DeathCertificates() {
     try {
       let response;
       if (searchType === 'id') {
-        response = await deathCertificateService.searchByIdNumber(searchValue);
+        response = await deathCertificateService.search({ idNumber: searchValue });
         setResults(response.data.data);
       } else if (searchType === 'registration') {
-        response = await deathCertificateService.searchByRegistrationNumber(searchValue);
+        response = await deathCertificateService.searchByRegistration(searchValue);
         setResults(response.data.data ? [response.data.data] : []);
       } else if (searchType === 'name') {
-        response = await deathCertificateService.searchByName(firstName, surname);
+        response = await deathCertificateService.search({ 
+          firstName: firstName, 
+          surname: surname 
+        });
         setResults(response.data.data);
       }
     } catch (error: any) {
+      console.error('Search error:', error);
       alert(error.response?.data?.message || 'Search failed');
       setResults([]);
     } finally {
@@ -58,12 +62,12 @@ export default function DeathCertificates() {
   };
 
   const getStatusBadge = (status: string) => {
-    const colors = {
+    const colors: { [key: string]: string } = {
       PENDING: 'bg-yellow-100 text-yellow-800',
       REGISTERED: 'bg-green-100 text-green-800',
       REJECTED: 'bg-red-100 text-red-800',
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
   return (
@@ -116,12 +120,13 @@ export default function DeathCertificates() {
                   placeholder="Enter National ID Number (e.g., 1234567890)"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
-                  className="flex-1 border rounded-md p-2"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  className="flex-1 border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <button
                   onClick={handleSearch}
                   disabled={!searchValue || loading}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition"
                 >
                   {loading ? 'Searching...' : 'Search'}
                 </button>
@@ -135,12 +140,13 @@ export default function DeathCertificates() {
                   placeholder="Enter Death Certificate Number (e.g., DTH/2026/XXXXX)"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
-                  className="flex-1 border rounded-md p-2"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  className="flex-1 border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <button
                   onClick={handleSearch}
                   disabled={!searchValue || loading}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition"
                 >
                   {loading ? 'Searching...' : 'Search'}
                 </button>
@@ -154,19 +160,20 @@ export default function DeathCertificates() {
                   placeholder="First Name"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="flex-1 border rounded-md p-2"
+                  className="flex-1 border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <input
                   type="text"
                   placeholder="Surname"
                   value={surname}
                   onChange={(e) => setSurname(e.target.value)}
-                  className="flex-1 border rounded-md p-2"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  className="flex-1 border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 <button
                   onClick={handleSearch}
                   disabled={!firstName || !surname || loading}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition"
                 >
                   {loading ? 'Searching...' : 'Search'}
                 </button>
@@ -183,31 +190,31 @@ export default function DeathCertificates() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reg #</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date of Death</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reg #</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Death</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {results.map((cert) => (
-                    <tr key={cert.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedCert(cert)}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{cert.registrationNumber}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">{cert.firstName} {cert.surname}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">{new Date(cert.dateOfDeath).toLocaleDateString()}</td>
+                    <tr key={cert.id} className="hover:bg-gray-50 cursor-pointer transition" onClick={() => setSelectedCert(cert)}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cert.registrationNumber}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{cert.firstName} {cert.surname}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(cert.dateOfDeath).toLocaleDateString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(cert.status)}`}>
                           {cert.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedCert(cert);
                           }}
-                          className="text-blue-600 hover:text-blue-900 mr-3"
+                          className="text-blue-600 hover:text-blue-900"
                         >
                           View Details
                         </button>
@@ -232,22 +239,28 @@ export default function DeathCertificates() {
           </div>
         )}
 
-        {results.length === 0 && searchValue && !loading && (
+        {results.length === 0 && (searchValue || firstName || surname) && !loading && (
           <div className="p-6 text-center text-gray-500">
             No death records found. Try a different search term.
+          </div>
+        )}
+
+        {results.length === 0 && !searchValue && !firstName && !surname && !loading && (
+          <div className="p-6 text-center text-gray-500">
+            Enter search criteria above to find death records.
           </div>
         )}
       </div>
 
       {/* Details Modal */}
       {selectedCert && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white px-6 py-4 border-b flex justify-between items-center">
               <h2 className="text-xl font-bold">Death Certificate Details</h2>
               <button
                 onClick={() => setSelectedCert(null)}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
+                className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
               >
                 ×
               </button>
@@ -277,86 +290,86 @@ export default function DeathCertificates() {
 
               {/* Deceased Information */}
               <div>
-                <h3 className="text-lg font-semibold mb-3">Deceased Information</h3>
-                <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold mb-3 text-gray-900">Deceased Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
                   <div>
                     <label className="text-sm text-gray-500">Full Name</label>
-                    <p className="font-medium">{selectedCert.firstName} {selectedCert.surname}</p>
+                    <p className="font-medium text-gray-900">{selectedCert.firstName} {selectedCert.surname}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Registration Number</label>
-                    <p className="font-medium">{selectedCert.registrationNumber}</p>
+                    <p className="font-medium text-gray-900">{selectedCert.registrationNumber}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Date of Birth</label>
-                    <p className="font-medium">{new Date(selectedCert.dateOfBirth).toLocaleDateString()}</p>
+                    <p className="font-medium text-gray-900">{new Date(selectedCert.dateOfBirth).toLocaleDateString()}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Date of Death</label>
-                    <p className="font-medium">{new Date(selectedCert.dateOfDeath).toLocaleDateString()}</p>
+                    <p className="font-medium text-gray-900">{new Date(selectedCert.dateOfDeath).toLocaleDateString()}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Gender</label>
-                    <p className="font-medium">{selectedCert.gender}</p>
+                    <p className="font-medium text-gray-900">{selectedCert.gender}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Nationality</label>
-                    <p className="font-medium">{selectedCert.nationality}</p>
+                    <p className="font-medium text-gray-900">{selectedCert.nationality}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Place of Death</label>
-                    <p className="font-medium">{selectedCert.placeOfDeath}</p>
+                    <p className="font-medium text-gray-900">{selectedCert.placeOfDeath}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Manner of Death</label>
-                    <p className="font-medium">{selectedCert.mannerOfDeath}</p>
+                    <p className="font-medium text-gray-900">{selectedCert.mannerOfDeath}</p>
                   </div>
                 </div>
               </div>
 
               {/* Parents Information */}
               <div>
-                <h3 className="text-lg font-semibold mb-3">Parents Information</h3>
-                <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold mb-3 text-gray-900">Parents Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
                   <div>
                     <label className="text-sm text-gray-500">Mother's Name</label>
-                    <p className="font-medium">{selectedCert.motherFirstName} {selectedCert.motherSurname}</p>
+                    <p className="font-medium text-gray-900">{selectedCert.motherFirstName} {selectedCert.motherSurname}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Mother's Nationality</label>
-                    <p className="font-medium">{selectedCert.motherNationality}</p>
+                    <p className="font-medium text-gray-900">{selectedCert.motherNationality}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Father's Name</label>
-                    <p className="font-medium">{selectedCert.fatherFirstName} {selectedCert.fatherSurname}</p>
+                    <p className="font-medium text-gray-900">{selectedCert.fatherFirstName} {selectedCert.fatherSurname}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Father's Nationality</label>
-                    <p className="font-medium">{selectedCert.fatherNationality}</p>
+                    <p className="font-medium text-gray-900">{selectedCert.fatherNationality}</p>
                   </div>
                 </div>
               </div>
 
               {/* Informant Information */}
               <div>
-                <h3 className="text-lg font-semibold mb-3">Informant Information</h3>
+                <h3 className="text-lg font-semibold mb-3 text-gray-900">Informant Information</h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm text-gray-500">Informant Name</label>
-                      <p className="font-medium">{selectedCert.informantFirstName} {selectedCert.informantSurname}</p>
+                      <p className="font-medium text-gray-900">{selectedCert.informantFirstName} {selectedCert.informantSurname}</p>
                     </div>
                     <div>
                       <label className="text-sm text-gray-500">ID Number</label>
-                      <p className="font-medium">{selectedCert.informantIdNo}</p>
+                      <p className="font-medium text-gray-900">{selectedCert.informantIdNo}</p>
                     </div>
                     <div>
                       <label className="text-sm text-gray-500">Relationship</label>
-                      <p className="font-medium">{selectedCert.informantRelationship}</p>
+                      <p className="font-medium text-gray-900">{selectedCert.informantRelationship}</p>
                     </div>
                     <div>
                       <label className="text-sm text-gray-500">Address</label>
-                      <p className="font-medium">{selectedCert.informantAddress}</p>
+                      <p className="font-medium text-gray-900">{selectedCert.informantAddress}</p>
                     </div>
                   </div>
                 </div>
@@ -368,7 +381,7 @@ export default function DeathCertificates() {
                   <button
                     onClick={() => handleVerify(selectedCert.id)}
                     disabled={verifying}
-                    className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                    className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 transition"
                   >
                     {verifying ? 'Registering...' : 'Register Death Certificate'}
                   </button>
