@@ -30,16 +30,16 @@ export default function RootLayout({
                         <Link href="/" className="text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md">
                          Dashboard
                           </Link>
-                          <Link href="/national-id/new" className="text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md">
+                          <Link href="/national_id/new" className="text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md">
                            New National ID
                           </Link>
-                          <Link href="/death-certificate/new" className="text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md">
+                          <Link href="/death/new" className="text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md">
                            Report Death
                           </Link>
-                          <Link href="/applications" className="text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md">
+                          <Link href="/application" className="text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md">
                            Applications
                           </Link>
-                          <Link href="/death-certificates" className="text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md">
+                          <Link href="/death" className="text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-md">
                            Death Certificates
                     </Link>
                 </div>
