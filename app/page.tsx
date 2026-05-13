@@ -90,7 +90,7 @@ export default function Dashboard() {
                 <Link href="/national_id/new" className="flex-1 text-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
                   New Application
                 </Link>
-                <Link href="/national-id-applications" className="flex-1 text-center border border-blue-600 text-blue-600 px-4 py-2 rounded hover:bg-blue-50 transition">
+                <Link href="/application/applicationDetail" className="flex-1 text-center border border-blue-600 text-blue-600 px-4 py-2 rounded hover:bg-blue-50 transition">
                   View All
                 </Link>
               </div>
@@ -126,7 +126,7 @@ export default function Dashboard() {
                 <Link href="/death/new" className="flex-1 text-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
                   Report Death
                 </Link>
-                <Link href="/death-certificates-list" className="flex-1 text-center border border-red-600 text-red-600 px-4 py-2 rounded hover:bg-red-50 transition">
+                <Link href="/death" className="flex-1 text-center border border-red-600 text-red-600 px-4 py-2 rounded hover:bg-red-50 transition">
                   View All
                 </Link>
               </div>
@@ -184,7 +184,7 @@ export default function Dashboard() {
           </div>
           {applications.length > 5 && (
             <div className="px-6 py-4 border-t">
-              <Link href="/national-id-applications" className="text-blue-600 hover:text-blue-900 text-sm">
+              <Link href="/application/applicationDatail" className="text-blue-600 hover:text-blue-900 text-sm">
                 View all {applications.length} applications →
               </Link>
             </div>
@@ -234,7 +234,7 @@ export default function Dashboard() {
           </div>
           {deathCerts.length > 5 && (
             <div className="px-6 py-4 border-t">
-              <Link href="/death-certificates-list" className="text-blue-600 hover:text-blue-900 text-sm">
+              <Link href="/death" className="text-blue-600 hover:text-blue-900 text-sm">
                 View all {deathCerts.length} death certificates →
               </Link>
             </div>

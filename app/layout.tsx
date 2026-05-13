@@ -45,7 +45,7 @@ export default function RootLayout({
                       <Link href="/national_id/new" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         New Application
                       </Link>
-                      <Link href="/national-id-applications" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <Link href="/application" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         View All Applications
                       </Link>
                     </div>
@@ -63,10 +63,10 @@ export default function RootLayout({
                       <Link href="/death/new" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Report Death
                       </Link>
-                      <Link href="/death-certificates-list" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <Link href="/death" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         View All Certificates
                       </Link>
-                      <Link href="/death-certificates" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <Link href="/death" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Search Records
                       </Link>
                     </div>
