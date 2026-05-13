@@ -47,7 +47,7 @@ export default function Dashboard() {
   return (
     <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <div className="px-4 py-6 sm:px-0">
-        {/* Stats */}
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
             <div key={stat.label} className="bg-white overflow-hidden shadow rounded-lg">
@@ -59,62 +59,186 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Quick Actions */}
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <Link
-            href="/national_id/new"
-            className="bg-blue-600 text-white rounded-lg p-6 hover:bg-blue-700 transition"
-          >
-            <h3 className="text-lg font-medium">New National ID Application</h3>
-            <p className="mt-2 text-sm text-blue-100">Apply for a new National ID card</p>
-          </Link>
-          
-          <Link
-            href="/death/new"
-            className="bg-red-600 text-white rounded-lg p-6 hover:bg-red-700 transition"
-          >
-            <h3 className="text-lg font-medium">Report a Death</h3>
-            <p className="mt-2 text-sm text-red-100">Register a death certificate</p>
-          </Link>
+        {/* Quick Actions Section */}
+        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
+          {/* National ID Section */}
+          <div className="bg-white shadow rounded-lg p-6">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h2 className="text-xl font-bold text-blue-600">National ID Applications</h2>
+                <p className="text-gray-600 mt-1">Manage all National ID applications</p>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900">{applications.length}</div>
+                <div className="text-sm text-gray-500">Total Applications</div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Pending:</span>
+                <span className="font-semibold text-yellow-600">{applications.filter(a => a.status === 'PENDING').length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Verified:</span>
+                <span className="font-semibold text-green-600">{applications.filter(a => a.status === 'VERIFIED').length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Approved:</span>
+                <span className="font-semibold text-blue-600">{applications.filter(a => a.status === 'APPROVED').length}</span>
+              </div>
+              <div className="mt-4 flex space-x-3">
+                <Link href="/national_id/new" className="flex-1 text-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                  New Application
+                </Link>
+                <Link href="/national-id-applications" className="flex-1 text-center border border-blue-600 text-blue-600 px-4 py-2 rounded hover:bg-blue-50 transition">
+                  View All
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Death Certificate Section */}
+          <div className="bg-white shadow rounded-lg p-6">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h2 className="text-xl font-bold text-red-600">Death Certificates</h2>
+                <p className="text-gray-600 mt-1">Manage all death certificates</p>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900">{deathCerts.length}</div>
+                <div className="text-sm text-gray-500">Total Reports</div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Pending Registration:</span>
+                <span className="font-semibold text-yellow-600">{deathCerts.filter(c => c.status === 'PENDING').length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Registered:</span>
+                <span className="font-semibold text-green-600">{deathCerts.filter(c => c.status === 'REGISTERED').length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Rejected:</span>
+                <span className="font-semibold text-red-600">{deathCerts.filter(c => c.status === 'REJECTED').length}</span>
+              </div>
+              <div className="mt-4 flex space-x-3">
+                <Link href="/death/new" className="flex-1 text-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+                  Report Death
+                </Link>
+                <Link href="/death-certificates-list" className="flex-1 text-center border border-red-600 text-red-600 px-4 py-2 rounded hover:bg-red-50 transition">
+                  View All
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Recent Applications */}
+        {/* Recent Applications Table */}
         <div className="mt-8 bg-white shadow rounded-lg">
           <div className="px-4 py-5 border-b">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Applications</h3>
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Recent National ID Applications</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">App #</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">District</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">App #</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">District</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {applications.slice(0, 5).map((app) => (
-                  <tr key={app.id}>
+                  <tr key={app.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{app.applicationNumber}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.firstName} {app.surname}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{app.firstName} {app.surname}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.residentialDistrict}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         app.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
                         app.status === 'VERIFIED' ? 'bg-green-100 text-green-800' :
+                        app.status === 'APPROVED' ? 'bg-blue-100 text-blue-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
                         {app.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.citizenshipScore}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span className={`font-semibold ${app.citizenshipScore >= 100 ? 'text-green-600' : 'text-red-600'}`}>
+                        {app.citizenshipScore}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <Link href={`/national_id/${app.id}`} className="text-blue-600 hover:text-blue-900">
+                        View Details
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {applications.length > 5 && (
+            <div className="px-6 py-4 border-t">
+              <Link href="/national-id-applications" className="text-blue-600 hover:text-blue-900 text-sm">
+                View all {applications.length} applications →
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Recent Death Certificates Table */}
+        <div className="mt-8 bg-white shadow rounded-lg">
+          <div className="px-4 py-5 border-b">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Death Certificates</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reg #</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Death</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {deathCerts.slice(0, 5).map((cert) => (
+                  <tr key={cert.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cert.registrationNumber}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{cert.firstName} {cert.surname}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(cert.dateOfDeath).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        cert.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                        cert.status === 'REGISTERED' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {cert.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <Link href={`/death/${cert.id}`} className="text-blue-600 hover:text-blue-900">
+                        View Details
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {deathCerts.length > 5 && (
+            <div className="px-6 py-4 border-t">
+              <Link href="/death-certificates-list" className="text-blue-600 hover:text-blue-900 text-sm">
+                View all {deathCerts.length} death certificates →
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

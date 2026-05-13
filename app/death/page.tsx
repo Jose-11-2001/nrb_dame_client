@@ -2,8 +2,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { deathCertificateService, DeathCertificate } from '@/services/deathCertificate.service';
-import { DownloadPDFButton } from '@/components/PDFGenerator';
+import { deathCertificateService, DeathCertificate } from '../services/deathCertificate.service';
+import { DownloadPDFButton } from '../components/PDFGenerator'
 import Link from 'next/link';
 
 export default function DeathCertificatesList() {

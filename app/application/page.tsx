@@ -2,8 +2,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { nationalIdService, NationalIdApplication } from '@/services/nationalId.service';
-import { DownloadPDFButton } from '@/components/PDFGenerator';
+import { nationalIdService, NationalIdApplication } from '../services/nationalId.service';
+import { DownloadPDFButton } from '../components/PDFGenerator';
 import Link from 'next/link';
 
 export default function NationalIdApplicationsList() {

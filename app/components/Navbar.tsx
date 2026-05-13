@@ -8,9 +8,9 @@ export default function Navbar() {
 
   const links = [
     { href: '/', label: 'Dashboard' },
-    { href: '/national-id/new', label: 'New National ID' },
-    { href: '/death-certificate/new', label: 'Report Death' },
-    { href: '/applications', label: 'Applications' },
+    { href: '/national_id/new', label: 'New National ID' },
+    { href: '/death/new', label: 'Report Death' },
+    { href: '/application', label: 'Applications' },
   ];
 
   return (
