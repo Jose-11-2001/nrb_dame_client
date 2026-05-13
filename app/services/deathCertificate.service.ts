@@ -1,3 +1,4 @@
+
 import axios from '../lib/axios';
 
 export interface DeathCertificate {
@@ -30,6 +31,9 @@ export interface DeathCertificate {
   informantAddress: string;
   status: string;
   createdAt: string;
+  updatedAt?: string;  // Add this
+  dateOfRegistration?: string;
+  districtRegistrarSignature?: string;
 }
 
 export const deathCertificateService = {
@@ -42,7 +46,6 @@ export const deathCertificateService = {
   register: (id: string, signature: string) =>
     axios.put(`/death-certificate/${id}/register`, { districtRegistrarSignature: signature }),
     
-  // Search endpoints
   search: (params: { idNumber?: string; firstName?: string; surname?: string }) =>
     axios.get<{ success: boolean; data: DeathCertificate[] }>('/death-certificate/search', { params }),
     

@@ -39,7 +39,7 @@ export default function NationalIdDetail() {
     try {
       await nationalIdService.verifyByVillageHead(id as string, villageHeadIdNo, signature);
       alert('Application verified successfully!');
-      fetchApplication(); // Refresh the data
+      fetchApplication();
     } catch (error: any) {
       alert(error.response?.data?.message || 'Verification failed');
     } finally {
@@ -152,8 +152,106 @@ export default function NationalIdDetail() {
                 <label className="text-sm text-gray-500">Nationality</label>
                 <p className="font-medium text-gray-900">{application.nationality}</p>
               </div>
+              <div>
+                <label className="text-sm text-gray-500">District of Birth</label>
+                <p className="font-medium text-gray-900">{application.districtOfBirth}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Traditional Authority</label>
+                <p className="font-medium text-gray-900">{application.taOfBirth}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Village</label>
+                <p className="font-medium text-gray-900">{application.villageOfBirth}</p>
+              </div>
             </div>
           </div>
+
+          {/* Parents Information */}
+          <div>
+            <h2 className="text-lg font-semibold mb-3 text-gray-900 border-b pb-2">Parents Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+              <div>
+                <label className="text-sm text-gray-500">Mother's Name</label>
+                <p className="font-medium text-gray-900">{application.motherFullName}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Mother's Nationality</label>
+                <p className="font-medium text-gray-900">{application.motherNationality}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Father's Name</label>
+                <p className="font-medium text-gray-900">{application.fatherFullName}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Father's Nationality</label>
+                <p className="font-medium text-gray-900">{application.fatherNationality}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Addresses */}
+          <div>
+            <h2 className="text-lg font-semibold mb-3 text-gray-900 border-b pb-2">Address Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+              <div>
+                <label className="text-sm text-gray-500">Residential District</label>
+                <p className="font-medium text-gray-900">{application.residentialDistrict}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Residential TA</label>
+                <p className="font-medium text-gray-900">{application.residentialTA}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Residential Village</label>
+                <p className="font-medium text-gray-900">{application.residentialVillage}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Permanent District</label>
+                <p className="font-medium text-gray-900">{application.permanentDistrict}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Permanent TA</label>
+                <p className="font-medium text-gray-900">{application.permanentTA}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Permanent Village</label>
+                <p className="font-medium text-gray-900">{application.permanentVillage}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Witness Information */}
+          <div>
+            <h2 className="text-lg font-semibold mb-3 text-gray-900 border-b pb-2">Witness Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+              <div>
+                <label className="text-sm text-gray-500">First Witness ID</label>
+                <p className="font-medium text-gray-900">{application.firstWitnessIdNo}</p>
+              </div>
+              <div>
+                <label className="text-sm text-gray-500">Second Witness ID</label>
+                <p className="font-medium text-gray-900">{application.secondWitnessIdNo}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Verification Details (if verified) */}
+          {application.status === 'VERIFIED' && (
+            <div>
+              <h2 className="text-lg font-semibold mb-3 text-gray-900 border-b pb-2">Verification Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-green-50 p-4 rounded-lg">
+                <div>
+                  <label className="text-sm text-gray-500">Verified By (Village Head ID)</label>
+                  <p className="font-medium text-gray-900">{application.villageHeadIdNo || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-500">Verification Date</label>
+                  <p className="font-medium text-gray-900">{application.updatedAt ? new Date(application.updatedAt).toLocaleDateString() : 'N/A'}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Register Button for Pending Applications */}
           {application.status === 'PENDING' && (

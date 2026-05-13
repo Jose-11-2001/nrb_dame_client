@@ -1,4 +1,3 @@
-// services/nationalId.service.ts
 import axios from '../lib/axios';
 
 export interface NationalIdApplication {
@@ -36,6 +35,12 @@ export interface NationalIdApplication {
   citizenshipScore: number;
   isEligible: boolean;
   createdAt: string;
+  // Add these missing properties
+  applicationDate?: string;
+  villageHeadIdNo?: string;
+  villageHeadSignature?: string;
+  rejectionReason?: string;
+  updatedAt?: string;  // Add this line
 }
 
 export const nationalIdService = {
@@ -47,4 +52,19 @@ export const nationalIdService = {
   
   verifyByVillageHead: (id: string, villageHeadIdNo: string, signature: string) => 
     axios.put(`/national-id/${id}/verify-village`, { villageHeadIdNo, signature }),
+  
+  uploadDocument: (id: string, file: File, documentType: string) => {
+    const formData = new FormData();
+    formData.append('document', file);
+    formData.append('documentType', documentType);
+    return axios.post(`/national-id/${id}/documents`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  
+  downloadReport: (startDate: string, endDate: string) =>
+    axios.get(`/national-id/reports/download`, {
+      params: { startDate, endDate },
+      responseType: 'blob'
+    }),
 };

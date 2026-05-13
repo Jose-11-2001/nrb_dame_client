@@ -1,4 +1,3 @@
-// app/death/[id]/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -38,7 +37,7 @@ export default function DeathCertificateDetail() {
       const response = await deathCertificateService.register(id as string, signature);
       if (response.data.success) {
         alert('Death certificate registered successfully!');
-        fetchCertificate(); // Refresh the data
+        fetchCertificate();
       }
     } catch (error: any) {
       alert(error.response?.data?.message || 'Verification failed');
@@ -233,13 +232,15 @@ export default function DeathCertificateDetail() {
           </div>
 
           {/* Registration Details (if registered) */}
-          {certificate.status === 'REGISTERED' && certificate.dateOfRegistration && (
+          {certificate.status === 'REGISTERED' && (
             <div>
               <h2 className="text-lg font-semibold mb-3 text-gray-900 border-b pb-2">Registration Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-green-50 p-4 rounded-lg">
                 <div>
                   <label className="text-sm text-gray-500">Date of Registration</label>
-                  <p className="font-medium text-gray-900">{new Date(certificate.dateOfRegistration).toLocaleDateString()}</p>
+                  <p className="font-medium text-gray-900">
+                    {certificate.dateOfRegistration ? new Date(certificate.dateOfRegistration).toLocaleDateString() : 'N/A'}
+                  </p>
                 </div>
                 <div>
                   <label className="text-sm text-gray-500">Registered By</label>

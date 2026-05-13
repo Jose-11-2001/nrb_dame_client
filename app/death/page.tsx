@@ -172,7 +172,7 @@ export default function DeathCertificatesList() {
                     <Link href={`/death/${cert.id}`} className="text-blue-600 hover:text-blue-900">
                       View
                     </Link>
-                    <DownloadPDFButton type="deathDetail" data={cert} label="PDF" />
+                    <DownloadPDFButton type="death" data={cert} label="PDF" />
                   </td>
                 </tr>
               ))}
