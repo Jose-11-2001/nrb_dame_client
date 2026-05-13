@@ -1,4 +1,3 @@
-// services/deathCertificate.service.ts
 import axios from '../lib/axios';
 
 export interface DeathCertificate {
@@ -7,6 +6,7 @@ export interface DeathCertificate {
   surname: string;
   firstName: string;
   otherNames?: string;
+  idNumber?: string;
   nationality: string;
   gender: 'MALE' | 'FEMALE';
   dateOfBirth: string;
@@ -42,15 +42,10 @@ export const deathCertificateService = {
   register: (id: string, signature: string) =>
     axios.put(`/death-certificate/${id}/register`, { districtRegistrarSignature: signature }),
     
-  // Search by ID Number (National ID of deceased)
-  searchByIdNumber: (idNumber: string) => 
-    axios.get<{ success: boolean; data: DeathCertificate[] }>(`/death-certificate/search?idNumber=${idNumber}`),
+  // Search endpoints
+  search: (params: { idNumber?: string; firstName?: string; surname?: string }) =>
+    axios.get<{ success: boolean; data: DeathCertificate[] }>('/death-certificate/search', { params }),
     
-  // Search by Registration Number
-  searchByRegistrationNumber: (regNumber: string) => 
+  searchByRegistration: (regNumber: string) =>
     axios.get<{ success: boolean; data: DeathCertificate }>(`/death-certificate/search/registration/${regNumber}`),
-    
-  // Search by Name
-  searchByName: (firstName: string, surname: string) => 
-    axios.get<{ success: boolean; data: DeathCertificate[] }>(`/death-certificate/search?firstName=${firstName}&surname=${surname}`),
 };
