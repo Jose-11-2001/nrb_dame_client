@@ -29,6 +29,7 @@ export interface DeathCertificate {
   informantRelationship: string;
   informantAddress: string;
   status: string;
+  createdAt: string;
 }
 
 export const deathCertificateService = {
@@ -40,4 +41,16 @@ export const deathCertificateService = {
   
   register: (id: string, signature: string) =>
     axios.put(`/death-certificate/${id}/register`, { districtRegistrarSignature: signature }),
+    
+  // Search by ID Number (National ID of deceased)
+  searchByIdNumber: (idNumber: string) => 
+    axios.get<{ success: boolean; data: DeathCertificate[] }>(`/death-certificate/search?idNumber=${idNumber}`),
+    
+  // Search by Registration Number
+  searchByRegistrationNumber: (regNumber: string) => 
+    axios.get<{ success: boolean; data: DeathCertificate }>(`/death-certificate/search/registration/${regNumber}`),
+    
+  // Search by Name
+  searchByName: (firstName: string, surname: string) => 
+    axios.get<{ success: boolean; data: DeathCertificate[] }>(`/death-certificate/search?firstName=${firstName}&surname=${surname}`),
 };
