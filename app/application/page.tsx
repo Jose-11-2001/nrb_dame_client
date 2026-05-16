@@ -180,7 +180,7 @@ export default function NationalIdApplicationsList() {
                     {new Date(app.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                    <Link href={`/applicationDetail/${app.id}`} className="text-blue-600 hover:text-blue-900">
+                    <Link href={`/application/${app.id}`} className="text-blue-600 hover:text-blue-900">
                       View
                     </Link>
                     <DownloadPDFButton type="national" data={app} label="PDF" />

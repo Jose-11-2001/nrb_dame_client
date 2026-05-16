@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { deathCertificateService, DeathCertificate } from '../services/deathCertificate.service';
-import { DownloadPDFButton } from '../components/PDFGenerator'
+import { DownloadPDFButton } from '../components/PDFGenerator';
 import Link from 'next/link';
+import { deathCertificateService, DeathCertificate } from '../services/deathCertificate.service';
 
 export default function DeathCertificatesList() {
   const [certificates, setCertificates] = useState<DeathCertificate[]>([]);
@@ -17,8 +17,11 @@ export default function DeathCertificatesList() {
 
   const fetchCertificates = async () => {
     try {
+      setLoading(true);
       const response = await deathCertificateService.getAll();
-      setCertificates(response.data.data);
+      // Handle different response structures
+      const data = response.data?.data || response.data || [];
+      setCertificates(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching certificates:', error);
     } finally {
@@ -30,7 +33,9 @@ export default function DeathCertificatesList() {
     const colors: { [key: string]: string } = {
       PENDING: 'bg-yellow-100 text-yellow-800',
       REGISTERED: 'bg-green-100 text-green-800',
+      APPROVED: 'bg-green-100 text-green-800',
       REJECTED: 'bg-red-100 text-red-800',
+      COMPLETED: 'bg-blue-100 text-blue-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
@@ -38,9 +43,10 @@ export default function DeathCertificatesList() {
   // Filter certificates
   const filteredCertificates = certificates.filter(cert => {
     const matchesSearch = searchTerm === '' || 
-      cert.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cert.surname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cert.registrationNumber.toLowerCase().includes(searchTerm.toLowerCase());
+      cert.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cert.surname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cert.certificateNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||  // ✅ Fixed: certificateNumber
+      cert.idNumber?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'ALL' || cert.status === statusFilter;
     
@@ -51,7 +57,7 @@ export default function DeathCertificatesList() {
   const stats = {
     total: certificates.length,
     pending: certificates.filter(c => c.status === 'PENDING').length,
-    registered: certificates.filter(c => c.status === 'REGISTERED').length,
+    registered: certificates.filter(c => c.status === 'REGISTERED' || c.status === 'APPROVED').length,
     rejected: certificates.filter(c => c.status === 'REJECTED').length,
   };
 
@@ -106,7 +112,7 @@ export default function DeathCertificatesList() {
             <div className="flex-1">
               <input
                 type="text"
-                placeholder="Search by name or certificate number..."
+                placeholder="Search by name, certificate number, or ID number..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full border rounded-md p-2 focus:ring-2 focus:ring-red-500"
@@ -121,6 +127,7 @@ export default function DeathCertificatesList() {
                 <option value="ALL">All Status</option>
                 <option value="PENDING">Pending</option>
                 <option value="REGISTERED">Registered</option>
+                <option value="APPROVED">Approved</option>
                 <option value="REJECTED">Rejected</option>
               </select>
             </div>
@@ -132,8 +139,9 @@ export default function DeathCertificatesList() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reg #</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certificate #</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Number</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Death</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Place of Death</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -146,16 +154,19 @@ export default function DeathCertificatesList() {
               {filteredCertificates.map((cert) => (
                 <tr key={cert.id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {cert.registrationNumber}
+                    {cert.certificateNumber || cert.registrationNumber}  {/* ✅ Handle both */}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {cert.firstName} {cert.surname}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(cert.dateOfDeath).toLocaleDateString()}
+                    {cert.idNumber || cert.deceasedNationalId || '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {cert.placeOfDeath}
+                    {cert.dateOfDeath ? new Date(cert.dateOfDeath).toLocaleDateString() : '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {cert.placeOfDeath || '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(cert.status)}`}>
@@ -164,15 +175,17 @@ export default function DeathCertificatesList() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {cert.informantFirstName} {cert.informantSurname}
-                  </td>
+                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(cert.createdAt).toLocaleDateString()}
-                  </td>
+                    {cert.createdAt ? new Date(cert.createdAt).toLocaleDateString() : '-'}
+                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                     <Link href={`/death/${cert.id}`} className="text-blue-600 hover:text-blue-900">
                       View
                     </Link>
-                    <DownloadPDFButton type="death" data={cert} label="PDF" />
+                    {cert.certificateNumber && (
+                      <DownloadPDFButton type="death" data={cert} label="PDF" />
+                    )}
                   </td>
                 </tr>
               ))}

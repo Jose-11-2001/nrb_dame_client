@@ -50,6 +50,7 @@ export default function DeathCertificateDetail() {
     const colors: { [key: string]: string } = {
       PENDING: 'bg-yellow-100 text-yellow-800',
       REGISTERED: 'bg-green-100 text-green-800',
+      APPROVED: 'bg-green-100 text-green-800',
       REJECTED: 'bg-red-100 text-red-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
@@ -69,7 +70,7 @@ export default function DeathCertificateDetail() {
         <div className="bg-white shadow rounded-lg p-6 text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Certificate Not Found</h1>
           <p className="text-gray-600 mb-4">The death certificate you're looking for doesn't exist.</p>
-          <Link href="/death-certificates-list" className="text-blue-600 hover:text-blue-900">
+          <Link href="/death" className="text-blue-600 hover:text-blue-900">
             ← Back to Death Certificates
           </Link>
         </div>
@@ -85,7 +86,7 @@ export default function DeathCertificateDetail() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-white">Death Certificate</h1>
-              <p className="text-red-100 mt-1">Registration #{certificate.registrationNumber}</p>
+              <p className="text-red-100 mt-1">Certificate #{certificate.certificateNumber || certificate.registrationNumber}</p>
             </div>
             <div className="flex space-x-2">
               <DownloadPDFButton type="death" data={certificate} label="Download PDF" />
@@ -134,6 +135,10 @@ export default function DeathCertificateDetail() {
                 <p className="font-medium text-gray-900">{certificate.otherNames || 'N/A'}</p>
               </div>
               <div>
+                <label className="text-sm text-gray-500">ID Number</label>
+                <p className="font-medium text-gray-900">{certificate.idNumber || certificate.deceasedNationalId || 'N/A'}</p>
+              </div>
+              <div>
                 <label className="text-sm text-gray-500">Date of Birth</label>
                 <p className="font-medium text-gray-900">{new Date(certificate.dateOfBirth).toLocaleDateString()}</p>
               </div>
@@ -154,8 +159,8 @@ export default function DeathCertificateDetail() {
                 <p className="font-medium text-gray-900">{certificate.placeOfDeath}</p>
               </div>
               <div>
-                <label className="text-sm text-gray-500">Health Facility</label>
-                <p className="font-medium text-gray-900">{certificate.healthFacilityName || 'N/A'}</p>
+                <label className="text-sm text-gray-500">Cause of Death</label>
+                <p className="font-medium text-gray-900">{certificate.causeOfDeath || 'Not specified'}</p>
               </div>
               <div>
                 <label className="text-sm text-gray-500">Manner of Death</label>

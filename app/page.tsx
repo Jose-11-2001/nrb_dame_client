@@ -1,4 +1,3 @@
-// app/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -10,18 +9,22 @@ export default function Dashboard() {
   const [applications, setApplications] = useState<NationalIdApplication[]>([]);
   const [deathCerts, setDeathCerts] = useState<DeathCertificate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setError(null);
         const [appsRes, deathsRes] = await Promise.all([
           nationalIdService.getAll(),
           deathCertificateService.getAll(),
         ]);
-        setApplications(appsRes.data.data);
-        setDeathCerts(deathsRes.data.data);
-      } catch (error) {
+        
+        setApplications(appsRes.data?.data || appsRes.data || []);
+        setDeathCerts(deathsRes.data?.data || deathsRes.data || []);
+      } catch (error: any) {
         console.error('Error fetching data:', error);
+        setError(error.response?.data?.message || error.message || 'Failed to fetch data');
       } finally {
         setLoading(false);
       }
@@ -33,6 +36,23 @@ export default function Dashboard() {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-gray-500">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto py-6 px-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <h3 className="text-red-800 font-medium">Error loading dashboard</h3>
+          <p className="text-red-600 text-sm mt-1">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-3 text-sm text-red-700 hover:text-red-900 underline"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
@@ -90,7 +110,7 @@ export default function Dashboard() {
                 <Link href="/national_id/new" className="flex-1 text-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
                   New Application
                 </Link>
-                <Link href="/application/applicationDetail" className="flex-1 text-center border border-blue-600 text-blue-600 px-4 py-2 rounded hover:bg-blue-50 transition">
+                <Link href="/application" className="flex-1 text-center border border-blue-600 text-blue-600 px-4 py-2 rounded hover:bg-blue-50 transition">
                   View All
                 </Link>
               </div>
@@ -116,7 +136,7 @@ export default function Dashboard() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Registered:</span>
-                <span className="font-semibold text-green-600">{deathCerts.filter(c => c.status === 'REGISTERED').length}</span>
+                <span className="font-semibold text-green-600">{deathCerts.filter(c => c.status === 'REGISTERED' || c.status === 'APPROVED').length}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Rejected:</span>
@@ -173,7 +193,7 @@ export default function Dashboard() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <Link href={`/national_id/${app.id}`} className="text-blue-600 hover:text-blue-900">
+                      <Link href={`/application/${app.id}`} className="text-blue-600 hover:text-blue-900">
                         View Details
                       </Link>
                     </td>
@@ -184,7 +204,7 @@ export default function Dashboard() {
           </div>
           {applications.length > 5 && (
             <div className="px-6 py-4 border-t">
-              <Link href="/application/applicationDatail" className="text-blue-600 hover:text-blue-900 text-sm">
+              <Link href="/application" className="text-blue-600 hover:text-blue-900 text-sm">
                 View all {applications.length} applications →
               </Link>
             </div>
@@ -200,7 +220,7 @@ export default function Dashboard() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reg #</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certificate #</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Death</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -210,13 +230,15 @@ export default function Dashboard() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {deathCerts.slice(0, 5).map((cert) => (
                   <tr key={cert.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cert.registrationNumber}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {cert.certificateNumber || cert.registrationNumber}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{cert.firstName} {cert.surname}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(cert.dateOfDeath).toLocaleDateString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         cert.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                        cert.status === 'REGISTERED' ? 'bg-green-100 text-green-800' :
+                        cert.status === 'REGISTERED' || cert.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
                         {cert.status}
