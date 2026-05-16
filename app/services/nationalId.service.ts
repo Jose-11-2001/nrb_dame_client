@@ -1,3 +1,4 @@
+
 import axios from '../lib/axios';
 
 export interface NationalIdApplication {
@@ -9,13 +10,42 @@ export interface NationalIdApplication {
   dateOfBirth: string;
   gender: string;
   nationality: string;
+  secondNationality?: string;
+  maritalStatus: string;
   residentialDistrict: string;
   residentialTA: string;
   residentialVillage: string;
+  permanentDistrict: string;
+  permanentTA: string;
+  permanentVillage: string;
+  districtOfBirth: string;  
+  taOfBirth: string;        
+  villageOfBirth: string;   
+  birthCertificateNo?: string;
+  motherIdNo?: string;
+  motherFullName: string;
+  motherNationality: string;
+  motherDistrict: string;
+  motherTA: string;
+  motherVillage: string;
+  fatherIdNo?: string;
+  fatherFullName: string;
+  fatherNationality: string;
+  fatherDistrict: string;
+  fatherTA: string;
+  fatherVillage: string;
+  firstWitnessIdNo: string;
+  firstWitnessSignature?: string;
+  secondWitnessIdNo: string;
+  secondWitnessSignature?: string;
+  applicantSignature?: string;
+  villageHeadIdNo?: string;
+  villageHeadSignature?: string;
+  villageHeadStamp?: string;
   status: string;
   citizenshipScore: number;
   isEligible: boolean;
-  maritalStatus: string;
+  rejectionReason?: string;
   createdAt: string;
   updatedAt?: string;
 }
